@@ -1,8 +1,8 @@
 export const ERRORTYPE = {
-  INVALID_FILE_TYPE: "file-invalid-type",
-  FILE_TOO_LARGE: "file-too-large",
-  FILE_TOO_SMALL: "file-too-small",
-  TOO_MANY_FILES: "too-many-files",
+  INVALID_FILE_TYPE: 'file-invalid-type',
+  FILE_TOO_LARGE: 'file-too-large',
+  FILE_TOO_SMALL: 'file-too-small',
+  TOO_MANY_FILES: 'too-many-files',
 } as const;
 
 export type ERRORTYPE = (typeof ERRORTYPE)[keyof typeof ERRORTYPE];
@@ -29,3 +29,46 @@ export type FileRejection = {
 };
 
 export type FileRejectionList = FileRejection[];
+
+export type GeneralInfoData = {
+  format: string;
+  mime: string;
+  size: string;
+  duration: string;
+  totalTracks: number;
+  tags: {
+    title?: string;
+    description?: string;
+    artist?: string;
+    album?: string;
+    albumArtist?: string;
+    trackNumber?: number;
+    tracksTotal?: number;
+    discNumber?: number;
+    discsTotal?: number;
+    genre?: string;
+    date?: string;
+    lyrics?: string;
+    comment?: string;
+  };
+};
+
+export type VideoTrackData = {
+  type: string;
+  codec: string;
+  resolution: string;
+  fullCodecString: string;
+  languageCode: string;
+  codedWidth: number;
+  codedHeight: number;
+  rotation: number;
+  transparency: boolean;
+  hdr: boolean;
+  packetCount: number;
+  frameRate: number;
+  averageBitrate: number;
+  colorPrimaries: string;
+  transferCharacteristics: string;
+  matrixCoefficients: string;
+  fullRange: boolean | string;
+};

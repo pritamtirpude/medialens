@@ -1,8 +1,8 @@
 function Navbar() {
   return (
-    <header className="border-b-2 border-">
-      <nav className=" max-w-3xl mx-auto py-4">
-        <h1 className="font-semibold">MediaLens</h1>
+    <header className="mt-4">
+      <nav className="mx-auto max-w-3xl rounded-md p-2">
+        <h1 className="text-2xl font-bold text-white">MediaLens</h1>
       </nav>
     </header>
   );
