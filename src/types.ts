@@ -65,10 +65,24 @@ export type VideoTrackData = {
   transparency: boolean;
   hdr: boolean;
   packetCount: number;
-  frameRate: number;
+  averagePacketRate: number;
   averageBitrate: number;
   colorPrimaries: string;
   transferCharacteristics: string;
   matrixCoefficients: string;
   fullRange: boolean | string;
 };
+
+
+export type AudioTrackData = {
+  type: string;
+  codec: string;
+  fullCodecString: string;
+  languageCode: string;
+  channels: number;
+  sampleRate: number;
+  duration: number;
+  packetCount: number;
+  averagePacketRate: number;
+  averageBitrate: number;
+}
