@@ -1,9 +1,15 @@
 import { useTrackStore } from "@/store/tracksStore";
 import type { VideoTrackData } from "@/types";
+import { motion } from 'motion/react';
 import { useEffect, useState } from "react";
 import InfoCard from "./InfoCard";
 
-function VideoInfo() {
+
+type VideoInfoProps = {
+  direction: number;
+}
+
+function VideoInfo({ direction }: VideoInfoProps) {
   const { inputTracks } = useTrackStore();
   const [videoInfo, setVideoInfo] = useState<VideoTrackData | null>(null);
 
@@ -24,7 +30,7 @@ function VideoInfo() {
       const transparency = await videoTracks?.canBeTransparent();
       const hdr = await videoTracks?.hasHighDynamicRange();
       const packetCount = await videoTracks?.computePacketStats().then(stats => stats.packetCount);
-      const frameRate = await videoTracks?.computePacketStats().then(stats => stats.averagePacketRate);
+      const averagePacketRate = await videoTracks?.computePacketStats().then(stats => stats.averagePacketRate);
       const averageBitrate = await videoTracks?.computePacketStats().then(stats => stats.averageBitrate);
       const colorPrimaries = await videoTracks?.getColorSpace().then(space => space?.primaries ?? "Unknown");
       const transferCharacteristics = await videoTracks?.getColorSpace().then(space => space?.transfer ?? "Unknown");
@@ -43,7 +49,7 @@ function VideoInfo() {
         transparency: transparency || false,
         hdr: hdr || false,
         packetCount: packetCount || 0,
-        frameRate: frameRate || 0,
+        averagePacketRate: averagePacketRate || 0,
         averageBitrate: averageBitrate || 0,
         colorPrimaries: colorPrimaries || 'N/A',
         transferCharacteristics: transferCharacteristics || 'N/A',
@@ -66,7 +72,7 @@ function VideoInfo() {
   }
 
   return (
-    <div className='grid grid-cols-2 gap-2'>
+    <motion.div variants={animationVariants} initial="initial" animate="animate" exit="exit" custom={direction} className='grid grid-cols-2 gap-2'>
       <InfoCard title="Type" stats={videoInfo.type} />
       <InfoCard title="Codec" stats={videoInfo.codec} />
       <InfoCard title="Resolution" stats={videoInfo.resolution} />
@@ -78,14 +84,35 @@ function VideoInfo() {
       <InfoCard title="Transparency" stats={videoInfo.transparency ? "Yes" : "No"} />
       <InfoCard title="HDR" stats={videoInfo.hdr ? "Yes" : "No"} />
       <InfoCard title="Packet Count" stats={videoInfo.packetCount.toString()} />
-      <InfoCard title="Frame Rate" stats={videoInfo.frameRate.toString()} />
-      <InfoCard title="Average Bitrate" stats={videoInfo.averageBitrate.toString()} />
+      <InfoCard title="Average Packet Rate" stats={`${videoInfo.averagePacketRate.toString()} Hz (FPS)`} />
+      <InfoCard title="Average Bitrate" stats={`${videoInfo.averageBitrate.toString()} bps`} />
       <InfoCard title="Color Primaries" stats={videoInfo.colorPrimaries} />
       <InfoCard title="Transfer Characteristics" stats={videoInfo.transferCharacteristics} />
       <InfoCard title="Matrix Coefficients" stats={videoInfo.matrixCoefficients} />
       <InfoCard title="Full Range" stats={videoInfo.fullRange.toString()} />
-    </div>
+    </motion.div>
   )
 }
 
 export default VideoInfo
+
+const animationVariants = {
+  initial: (direction: number) => ({
+    x: direction > 0 ? '100%' : '-100%',
+    filter: 'blur(5px)',
+    opacity: 0,
+  }),
+  animate: {
+    x: '0%',
+    opacity: 1,
+    filter: 'blur(0px)',
+    transition: { duration: 0.3 },
+  },
+  transition: { duration: 0.3 },
+  exit: (direction: number) => ({
+    x: direction > 0 ? '-100%' : '100%',
+    opacity: 0,
+    filter: 'blur(5px)',
+    transition: { duration: 0.3 },
+  }),
+}

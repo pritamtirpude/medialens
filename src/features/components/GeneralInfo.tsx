@@ -1,10 +1,15 @@
 import { formatFileSize } from '@/lib/utils';
 import { useTrackStore } from '@/store/tracksStore';
 import type { GeneralInfoData } from '@/types';
+import { motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import InfoCard from './InfoCard';
 
-function GeneralInfo() {
+type GeneralInfoProps = {
+  direction: number;
+}
+
+function GeneralInfo({ direction }: GeneralInfoProps) {
   const { inputTracks } = useTrackStore();
   const [generalInfo, setGeneralInfo] = useState<GeneralInfoData | null>(null);
 
@@ -54,7 +59,7 @@ function GeneralInfo() {
   }
 
   return (
-    <div className='grid grid-cols-2 gap-2'>
+    <motion.div variants={animationVariants} initial="initial" animate="animate" exit="exit" custom={direction} className='grid grid-cols-2 gap-2'>
       <InfoCard title="Format" stats={generalInfo.format} />
       <InfoCard title="MIME Type" stats={generalInfo.mime} />
       <InfoCard title="Size" stats={generalInfo.size} />
@@ -73,8 +78,29 @@ function GeneralInfo() {
           <InfoCard title="Comment" stats={generalInfo.tags.comment || 'N/A'} />
         </>
       )}
-    </div>
+    </motion.div>
   );
 }
 
 export default GeneralInfo;
+
+const animationVariants = {
+  initial: (direction: number) => ({
+    x: direction > 0 ? '100%' : '-100%',
+    filter: 'blur(5px)',
+    opacity: 0,
+  }),
+  animate: {
+    x: '0%',
+    opacity: 1,
+    filter: 'blur(0px)',
+    transition: { duration: 0.3 },
+  },
+  transition: { duration: 0.3 },
+  exit: (direction: number) => ({
+    x: direction > 0 ? '-100%' : '100%',
+    opacity: 0,
+    filter: 'blur(5px)',
+    transition: { duration: 0.3 },
+  }),
+}
