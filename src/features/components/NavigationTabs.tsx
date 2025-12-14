@@ -1,4 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTheme } from '@/contexts/theme-provider';
 import { cn, tabsList } from '@/lib/utils';
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
@@ -10,14 +11,16 @@ import VideoInfo from './VideoInfo';
 
 function NavigationTabs() {
   const [isActiveTab, setIsActiveTab] = useState('general');
-  const [ref, bounds] = useMeasure()
+  const [ref, bounds] = useMeasure();
+
+  const { theme } = useTheme()
 
   const [direction, setDirection] = useState(0);
 
   return (
-    <div className="mt-4 overflow-hidden">
-      <Tabs defaultValue="general" className="relative">
-        <TabsList className="bg-accent-foreground h-14 w-full max-w-[500px]">
+    <div className="my-4 overflow-hidden">
+      <Tabs defaultValue="general" className="relative rounded-md">
+        <TabsList className="bg-transparent h-14 w-full max-w-[500px]">
           {tabsList.map((tab) => (
             <TabsTrigger
               key={tab}
@@ -26,8 +29,8 @@ function NavigationTabs() {
                 setDirection(tabsList.indexOf(tab) > tabsList.indexOf(isActiveTab) ? 1 : -1);
               }}
               className={cn(
-                'relative z-50 transition duration-150 cursor-pointer rounded-full text-gray-400 hover:text-white',
-                isActiveTab === tab ? 'text-white' : '',
+                'relative z-50 transition duration-150 cursor-pointer rounded-full',
+                isActiveTab === tab ? 'text-primary-foreground' : ''
               )}
               value={tab}
             >
@@ -37,7 +40,7 @@ function NavigationTabs() {
                   id="underline"
                   layoutId="underline"
                   animate={{
-                    backgroundColor: '#51a2ff',
+                    backgroundColor: theme === "dark" ? '#cba6f7' : '#8839ef',
                   }}
                   transition={{
                     type: "spring",
@@ -45,13 +48,13 @@ function NavigationTabs() {
                     damping: 40,
                     bounce: 0
                   }}
-                  className={cn('absolute inset-0 -z-10 rounded-md')}
+                  className={cn('absolute inset-0 -z-10 rounded-full')}
                 />
               )}
             </TabsTrigger>
           ))}
         </TabsList>
-        <motion.div animate={{ height: bounds.height }}>
+        <motion.div className='min-h-screen' animate={{ height: bounds.height }}>
           <div ref={ref}>
             <AnimatePresence mode='popLayout' initial={false} custom={direction}>
               <TabsContent key={isActiveTab} value="general">

@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import { useTrackStore } from "@/store/tracksStore";
 import type { AudioTrackData } from "@/types";
 import { motion } from 'motion/react';
@@ -10,7 +11,7 @@ type AudioInfoProps = {
 }
 
 function AudioInfo({ direction }: AudioInfoProps) {
-    const { inputTracks } = useTrackStore();
+    const { inputTracks, isTrackLoading } = useTrackStore();
     const [audioInfo, setAudioInfo] = useState<AudioTrackData | null>(null);
 
     useEffect(() => {
@@ -51,6 +52,17 @@ function AudioInfo({ direction }: AudioInfoProps) {
         }
         getAudioTrackInfo();
     }, [inputTracks])
+
+
+    if (isTrackLoading) {
+        return (
+            <div className='grid grid-cols-2 gap-2'>
+                {Array.from({ length: 8 }).map((_, index) => (
+                    <Skeleton key={Math.random() + '_' + index + '_' + 'skeleton'} className="w-full rounded-md h-16 bg-secondary dark:bg-primary-foreground" />
+                ))}
+            </div>
+        )
+    }
 
     if (audioInfo === null) {
         return (
