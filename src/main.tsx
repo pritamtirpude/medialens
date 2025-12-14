@@ -1,6 +1,7 @@
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
+import { ThemeProvider } from "./contexts/theme-provider.tsx";
 
 import { routeTree } from "./routeTree.gen.ts";
 
@@ -22,7 +23,9 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <RouterProvider router={router} />
+      <ThemeProvider defaultTheme="light" storageKey="medialens-theme">
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </StrictMode>
   );
 }

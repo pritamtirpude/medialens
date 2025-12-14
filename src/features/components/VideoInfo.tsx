@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import { useTrackStore } from "@/store/tracksStore";
 import type { VideoTrackData } from "@/types";
 import { motion } from 'motion/react';
@@ -10,7 +11,7 @@ type VideoInfoProps = {
 }
 
 function VideoInfo({ direction }: VideoInfoProps) {
-  const { inputTracks } = useTrackStore();
+  const { inputTracks, isTrackLoading } = useTrackStore();
   const [videoInfo, setVideoInfo] = useState<VideoTrackData | null>(null);
 
   useEffect(() => {
@@ -21,7 +22,9 @@ function VideoInfo({ direction }: VideoInfoProps) {
 
       const type = videoTracks?.type;
       const codec = videoTracks?.codec;
-      const resolution = `${videoTracks?.displayWidth}x${videoTracks?.displayHeight}`;
+      const resolution = videoTracks?.displayWidth && videoTracks?.displayHeight
+        ? `${videoTracks.displayWidth}x${videoTracks.displayHeight}`
+        : 'N/A';
       const fullCodecString = await videoTracks?.getCodecParameterString();
       const languageCode = videoTracks?.languageCode;
       const codedWidth = videoTracks?.codedWidth;
@@ -63,6 +66,16 @@ function VideoInfo({ direction }: VideoInfoProps) {
       });
     }
   }, [inputTracks]);
+
+  if (isTrackLoading) {
+    return (
+      <div className='grid grid-cols-2 gap-2'>
+        {Array.from({ length: 8 }).map((_, index) => (
+          <Skeleton key={Math.random() + '_' + index + '_' + 'skeleton'} className="w-full rounded-md h-16 bg-secondary dark:bg-primary-foreground" />
+        ))}
+      </div>
+    )
+  }
 
   if (videoInfo === null) {
     return (

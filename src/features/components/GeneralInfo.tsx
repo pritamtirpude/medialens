@@ -1,6 +1,8 @@
+import { Skeleton } from '@/components/ui/skeleton';
 import { formatFileSize } from '@/lib/utils';
 import { useTrackStore } from '@/store/tracksStore';
 import type { GeneralInfoData } from '@/types';
+import { format } from 'date-fns';
 import { motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import InfoCard from './InfoCard';
@@ -10,14 +12,14 @@ type GeneralInfoProps = {
 }
 
 function GeneralInfo({ direction }: GeneralInfoProps) {
-  const { inputTracks } = useTrackStore();
+  const { inputTracks, isTrackLoading } = useTrackStore();
   const [generalInfo, setGeneralInfo] = useState<GeneralInfoData | null>(null);
 
   useEffect(() => {
     const getGeneralInfo = async () => {
       if (!inputTracks) return null;
 
-      const format = await inputTracks.getFormat();
+      const formatData = await inputTracks.getFormat();
       const mime = await inputTracks.getMimeType();
       const size = await inputTracks.source?.getSize();
       const duration = await inputTracks.computeDuration();
@@ -25,7 +27,7 @@ function GeneralInfo({ direction }: GeneralInfoProps) {
       const tracks = (await inputTracks.getTracks()).length;
 
       return {
-        format: format.name,
+        format: formatData.name,
         mime,
         size: formatFileSize(size || 0),
         duration: duration.toFixed(2) + ' seconds',
@@ -38,7 +40,7 @@ function GeneralInfo({ direction }: GeneralInfoProps) {
           trackNumber: tags.trackNumber || 0,
           description: tags.description || 'N/A',
           genre: tags.genre || 'N/A',
-          date: tags.date instanceof Date ? tags.date.toISOString() : tags.date || 'N/A',
+          date: tags.date ? format(new Date(tags.date), 'MMM dd, yyyy') : 'N/A',
           comment: tags.comment || 'N/A',
         },
       };
@@ -50,6 +52,18 @@ function GeneralInfo({ direction }: GeneralInfoProps) {
       });
     }
   }, [inputTracks]);
+
+
+
+  if (isTrackLoading) {
+    return (
+      <div className='grid grid-cols-2 gap-2'>
+        {Array.from({ length: 8 }).map((_, index) => (
+          <Skeleton key={Math.random() + '_' + index + '_' + 'skeleton'} className="w-full rounded-md h-16 bg-secondary dark:bg-primary-foreground" />
+        ))}
+      </div>
+    )
+  }
 
   if (generalInfo === null) {
     return (
