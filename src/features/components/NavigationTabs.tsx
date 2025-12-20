@@ -30,17 +30,19 @@ function NavigationTabs() {
               }}
               className={cn(
                 'relative z-50 transition duration-150 cursor-pointer rounded-full',
-                isActiveTab === tab ? 'text-primary-foreground' : ''
               )}
               value={tab}
             >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              <p className={cn('text-secondary-foreground', isActiveTab === tab && 'text-primary-foreground')}>
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </p>
               {isActiveTab === tab && (
                 <motion.div
                   id="underline"
                   layoutId="underline"
                   animate={{
                     backgroundColor: theme === "dark" ? '#cba6f7' : '#8839ef',
+
                   }}
                   transition={{
                     type: "spring",
@@ -54,7 +56,7 @@ function NavigationTabs() {
             </TabsTrigger>
           ))}
         </TabsList>
-        <motion.div className='min-h-screen' animate={{ height: bounds.height }}>
+        <motion.div className='min-h-[70vh]' animate={{ height: bounds.height }}>
           <div ref={ref}>
             <AnimatePresence mode='popLayout' initial={false} custom={direction}>
               <TabsContent key={isActiveTab} value="general">
