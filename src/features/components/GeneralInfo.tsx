@@ -3,6 +3,7 @@ import { formatFileSize } from '@/lib/utils';
 import { useTrackStore } from '@/store/tracksStore';
 import type { GeneralInfoData } from '@/types';
 import { format } from 'date-fns';
+import { ImageUp } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import InfoCard from './InfoCard';
@@ -14,6 +15,8 @@ type GeneralInfoProps = {
 function GeneralInfo({ direction }: GeneralInfoProps) {
   const { inputTracks, isTrackLoading } = useTrackStore();
   const [generalInfo, setGeneralInfo] = useState<GeneralInfoData | null>(null);
+
+  const MotionImageUp = motion.create(ImageUp);
 
   useEffect(() => {
     const getGeneralInfo = async () => {
@@ -57,7 +60,7 @@ function GeneralInfo({ direction }: GeneralInfoProps) {
 
   if (isTrackLoading) {
     return (
-      <div className='grid grid-cols-2 gap-2'>
+      <div className='grid grid-cols-2 gap-2 p-3'>
         {Array.from({ length: 8 }).map((_, index) => (
           <Skeleton key={Math.random() + '_' + index + '_' + 'skeleton'} className="w-full rounded-md h-16 bg-secondary dark:bg-primary-foreground" />
         ))}
@@ -65,34 +68,52 @@ function GeneralInfo({ direction }: GeneralInfoProps) {
     )
   }
 
-  if (generalInfo === null) {
+  if (generalInfo === null && inputTracks === null) {
     return (
-      <div>
-        <h1>No file loaded</h1>
-      </div>);
+      <div className='p-3 flex flex-col justify-center items-center'>
+        <MotionImageUp size={100} className='text-primary'
+          fill="none"
+          strokeWidth={2}
+          style={{
+            strokeDasharray: 100,
+          }}
+          initial={{ strokeDashoffset: 100 }}
+          animate={{ strokeDashoffset: 0 }}
+          transition={{
+            duration: 1.5,
+            ease: "easeInOut",
+          }}
+        />
+        <p className="text-muted-foreground mt-2 text-md">Upload a media file to view its metadata</p>
+      </div>
+    );
   }
 
   return (
-    <motion.div variants={animationVariants} initial="initial" animate="animate" exit="exit" custom={direction} className='grid grid-cols-2 gap-2'>
-      <InfoCard title="Format" stats={generalInfo.format} />
-      <InfoCard title="MIME Type" stats={generalInfo.mime} />
-      <InfoCard title="Size" stats={generalInfo.size} />
-      <InfoCard title="Duration" stats={generalInfo.duration} />
-      <InfoCard title="Total Tracks" stats={generalInfo.totalTracks.toString()} />
-      {generalInfo && Object.entries(generalInfo.tags).some(([, value]) => value && value !== 'N/A' && value !== 0) && (
-        <>
-          <InfoCard title="Title" stats={generalInfo.tags.title || 'N/A'} />
-          <InfoCard title="Album" stats={generalInfo.tags.album || 'N/A'} />
-          <InfoCard title="Artist" stats={generalInfo.tags.artist || 'N/A'} />
-          <InfoCard title="Album Artist" stats={generalInfo.tags.albumArtist || 'N/A'} />
-          <InfoCard title="Track Number" stats={generalInfo.tags.trackNumber?.toString() || '0'} />
-          <InfoCard title="Description" stats={generalInfo.tags.description || 'N/A'} />
-          <InfoCard title="Genre" stats={generalInfo.tags.genre || 'N/A'} />
-          <InfoCard title="Date" stats={generalInfo.tags.date?.toString() || 'N/A'} />
-          <InfoCard title="Comment" stats={generalInfo.tags.comment || 'N/A'} />
-        </>
-      )}
-    </motion.div>
+    <>
+      {generalInfo &&
+        <motion.div variants={animationVariants} initial="initial" animate="animate" exit="exit" custom={direction} className='grid grid-cols-2 gap-2'>
+          <InfoCard title="Format" stats={generalInfo.format} />
+          <InfoCard title="MIME Type" stats={generalInfo.mime} />
+          <InfoCard title="Size" stats={generalInfo.size} />
+          <InfoCard title="Duration" stats={generalInfo.duration} />
+          <InfoCard title="Total Tracks" stats={generalInfo.totalTracks.toString()} />
+          {generalInfo && Object.entries(generalInfo.tags).some(([, value]) => value && value !== 'N/A' && value !== 0) && (
+            <>
+              <InfoCard title="Title" stats={generalInfo.tags.title || 'N/A'} />
+              <InfoCard title="Album" stats={generalInfo.tags.album || 'N/A'} />
+              <InfoCard title="Artist" stats={generalInfo.tags.artist || 'N/A'} />
+              <InfoCard title="Album Artist" stats={generalInfo.tags.albumArtist || 'N/A'} />
+              <InfoCard title="Track Number" stats={generalInfo.tags.trackNumber?.toString() || '0'} />
+              <InfoCard title="Description" stats={generalInfo.tags.description || 'N/A'} />
+              <InfoCard title="Genre" stats={generalInfo.tags.genre || 'N/A'} />
+              <InfoCard title="Date" stats={generalInfo.tags.date?.toString() || 'N/A'} />
+              <InfoCard title="Comment" stats={generalInfo.tags.comment || 'N/A'} />
+            </>
+          )}
+        </motion.div>
+      }
+    </>
   );
 }
 
